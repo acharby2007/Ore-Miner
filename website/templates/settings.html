@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %}Settings - Ore Miner{% endblock %}
+
+
+{% block content %}
+    <h1>Settings</h1>
+    <br><br>
+    <form method="POST">
+        <h2>Personalization</h2>
+        <div class="dropdown-divider"></div>
+        <br>
+        <div class="form-group">
+            <label for="username">Light/Dark Mode:</label><br>
+            <select class="form-select form-select-dark mb-3" aria-label=".form-select-lg example" onchange="showSubmit()" name="DarkLightSetName" id="DarkLightSetId">
+                <option value="LightModeSet" {% if lightDarkCookie == "LightModeSet" %}selected{% endif %}>Light Mode</option>
+                <option value="DarkModeSet" {% if lightDarkCookie == "DarkModeSet" %}selected{% endif %}>Dark Mode</option>
+            </select>
+        </div><br><br><br>
+        <div class="form-group">
+            <h2>Account</h2>
+            <p>This will be worked on soon.</p>
+        </div>
+        <br>
+        <button type="submit" id="submitButton" class="btn btn-primary" style="display: none">Save changes</button>
+    </form>
+    <script>
+        function showSubmit(){
+            submitButton = document.getElementById("submitButton");
+            submitButton.style.display = "inline"
+        }
+    </script>
+{% endblock %}

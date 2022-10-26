@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% block title %}404 Not Found - Ore Miner{% endblock %}
+
+
+{% block content %}
+    <i class="fa-solid fa-circle-exclamation" style="font-size: 100px"> 404 Error</i>
+    <br>
+    <br>
+    <br>
+    <br>
+    <p>This page you're looking for does not exist. You can use the navagation bar at the top of the page or you can click <a href="{{url_for('views.home')}}">here</a> to go to the home page.</p>
+{% endblock %}

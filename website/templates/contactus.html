@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block title %}Contact Us - Ore Miner{% endblock %}
+
+
+{% block content %}
+    {% if success %}
+      <h2>Thank you for your message. Your email will be replied to as soon as possible.</h2>
+    {% else %}
+      <h1>Contact Us</h1>
+
+      {% for message in form.name.errors %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+
+      {% for message in form.email.errors %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+
+      {% for message in form.message.errors %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+      <form action="{{ url_for('auth.contactus') }}" method=post align="left" style="width: 14vw; margin-left: 0;">
+          <div class="form-group" align="right">
+              {{ form.hidden_tag() }}
+          </div>
+          <br>
+          <div class="form-group" align="right">
+              {{ form.name.label }}
+              {{ form.name }}
+          </div>
+          <br>
+          <div class="form-group" align="right">
+              {{ form.email.label }}
+              {{ form.email }}
+          </div>
+          <br>
+          <div class="form-group" align="right">
+              {{ form.message.label }}
+              {{ form.message }}
+          </div>
+          <br>
+          {{ form.submit }}
+      </form>
+    {% endif %}
+
+{% endblock %}

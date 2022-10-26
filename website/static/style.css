@@ -1,0 +1,41 @@
+.stats-container {
+    padding: 25px;
+    background-color: rgb(221, 221, 221);
+    font-weight: 600;
+    width: fit-content;
+}
+
+.playerscore {
+    padding: 5px;
+    background-color: rgb(170, 170, 170);
+}
+
+table {
+    min-width: 1000px;
+}
+
+td {
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+}
+
+th {
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+}
+
+.progress {
+  width: 80%;
+  height: 50px;
+  background: grey;
+  margin-bottom: 50px;
+  position: relative;
+}
+.progress-inner {
+  background: #ff9500;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}

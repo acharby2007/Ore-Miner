@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block title %}Home - Ore Miner{% endblock %}
+
+
+{% block content %}
+    {% if settingsChanged %}
+        <script>
+            document.location.href = "/home_redirectFromSettings"
+        </script>
+    {% endif %}
+    <h1>This is the home page</h1>
+    Current username: {{ user.username }}<br><br>
+{% endblock %}

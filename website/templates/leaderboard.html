@@ -1,0 +1,207 @@
+{% extends "base.html" %} {% block title %}Leaderboard - Ore Miner{% endblock %}
+
+
+{% block content %}
+    <style>
+        .styled-table {
+            background-color: #4d4c59;
+            color: white;
+            border-collapse: collapse;
+            border-radius: 7px;
+            margin: 25px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-size: 1.2em;
+            font-family: sans-serif;
+            min-width: 80vw;
+            max-width: 450px;
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .styled-table tbody tr {
+            font-weight: bold;
+            border-bottom: 1px solid #c4c4c4;
+
+            .column {
+                border-bottom: 1px solid #c4c4c4;
+                border-top: 0;
+                vertical-align: middle;
+                font-size: 20px;
+            }
+
+            .column.checkbox, .column.centered {
+                text-align: center;
+            }
+
+            .column:last-child {
+                border-right: 0;
+            }
+        }
+
+        .styled-table tbody tr.gold {
+            font-weight: bold;
+            background-color: #353442;
+            border: 1px solid #f2e600;
+        }
+
+        .styled-table tbody tr.silver {
+            font-weight: bold;
+            background-color: #353442;
+            border: 1px solid #ebebeb;
+        }
+
+        .styled-table tbody tr.bronze {
+            font-weight: bold;
+            background-color: #353442;
+            border: 1px solid #ffa024;
+        }
+
+        .styled-table tbody tr.current_userRow {
+            padding-bottom: 10px;
+        }
+
+
+        .gfg {
+            border-collapse:separate;
+            border-spacing:0 15px;
+        }
+
+        #wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .editicons {
+            position: absolute;
+            display: block;
+            width: 60px;
+            left: -60px;
+        }
+
+        tr:first-child td {
+          border-top: 0;
+          border-bottom: 0;
+        }
+        tr td:first-child {
+          border-left: 0;
+          border-right: 0;
+        }
+        tr:last-child td {
+          border-top: 0;
+          border-bottom: 0;
+        }
+        tr td:last-child {
+          border-left: 0;
+          border-right: 0;
+        }
+    </style>
+    <h1>Leaderboard</h1><br>
+    <div id="wrapper">
+        <table class="styled-table gfg" border="0">
+            <thead>
+                <tr>
+                    {% if leaderboardoffline == True %}
+                        <th><p align="center">The leaderboard is currently offline</p></th>
+                    </tr>
+                </thead>
+            </table>
+                    {% else %}
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr{% if userRankPlacement|int == 1 %}
+                    class="gold"
+                    {% elif userRankPlacement|int == 2 %}
+                    class="silver"
+                    {% elif userRankPlacement|int == 3 %}
+                    class="bronze"{% else %}{% endif %}>
+                        <td class="column centered" style="border-radius: 10px 0 0 10px; border: 3px solid #706f87;">
+                            {% if userRankPlacement|int == 1 %}
+                            <i class='fas fa-medal' style='font-size:24px; color:#ffe100'></i>
+                            {% elif userRankPlacement|int == 2 %}
+                            <i class='fas fa-medal' style='font-size:24px; color:#ebebeb'></i>
+                            {% elif userRankPlacement|int == 3 %}
+                            <i class='fas fa-medal' style='font-size:24px; color:#ffa024'></i>
+                            {% else %}{% endif %}
+                            {{ userRankPlacement }}
+                        </td>
+                        <td style="border: 3px solid #706f87;">
+                            You ({{ user.username }})
+                        </td>
+                        <td style="border-radius: 0 10px 10px 0; border: 3px solid #706f87;">
+                            <span align="left">{{ userPlayerscore }}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                          <td colspan="3"><hr style="border: 2px solid #606291; border-radius: 1px 1px 1px 1px; padding: 0 0; background-color: #606291" /></td>
+                    </tr>
+                    <tr class="gold">
+                        <td style="border-radius: 10px 0 0 10px; border: 3px solid #d6cc0b;">
+                            <i class='fas fa-medal' style='font-size:24px; color:#ffe100'></i>
+                            1
+                        </td>
+                        <td style="border: 3px solid #d6cc0b;">
+                            <span align="left">{{ leaderboardname1 }}</span>
+                        </td>
+                        <td style="border-radius: 0 10px 10px 0; border: 3px solid #d6cc0b;">
+                            <span align="left">{{ leaderboardscore1 }}</span>
+                        </td>
+                    </tr>
+                    <tr class="silver">
+                        <td style="border-radius: 10px 0 0 10px; border: 3px solid #d1d1d1;">
+                            <i class='fas fa-medal' style='font-size:24px; color:#ebebeb'></i>
+                            2
+                            </td>
+                        <td style="border: 3px solid #d1d1d1;">
+                            <span align="left">{{ leaderboardname2 }}</span>
+                        </td>
+                        <td style="border-radius: 0 10px 10px 0; border: 3px solid #d1d1d1;">
+                            <span align="left">{{ leaderboardscore2 }}</span>
+                        </td>
+                    </tr>
+                    <tr class="bronze">
+                        <td style="border-radius: 10px 0 0 10px; border: 3px solid #ffa024;">
+                            <i class='fas fa-medal' style='font-size:24px; color:#ffa024'></i>
+                            3
+                        </td>
+                        <td style="border: 3px solid #ffa024;">
+                            <span align="left">{{ leaderboardname3 }}</span>
+                        </td>
+                        <td style="border-radius: 0 10px 10px 0; border: 3px solid #ffa024;">
+                            <span align="left">{{ leaderboardscore3 }}</span>
+                        </td>
+                    </tr>
+                    {% for i in range(0, leaderboardUsernamesSubPodium|length) %}
+                        {% if ( (leaderboardScoresSubPodium[loop.index0] != 0) and (leaderboardScoresSubPodium[loop.index0] is defined) ) %}
+                            <tr>
+                                <td style="border-radius: 10px 0 0 10px; border: 3px solid #706f87;">{{ i | int + 4 }}</td>
+                                <td style="border: 3px solid #706f87;">
+                                    <span align="left">{{ leaderboardUsernamesSubPodium[loop.index0] }}</span>
+                                </td>
+                                <td style="border-radius: 0 10px 10px 0; border: 3px solid #706f87;">
+                                    <span align="left">{{ leaderboardScoresSubPodium[loop.index0] }}</span>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

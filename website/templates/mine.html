@@ -1,0 +1,397 @@
+{% extends "base.html" %} {% block title %}Dashboard - Ore Miner{% endblock %}
+
+
+{% block content %}
+        <h2>Dashboard</h2>
+        <table class="table table-bordered table-dark" {% if lightDarkCookie == "DarkModeSet" %}style="border-radius: 20px"{% else %}{% endif %}>
+          <thead>
+            <tr>
+              <th scope="col">Stats</th>
+              <th scope="col">Start Mining</th>
+              <th scope="col">Mines</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background-color: #484e57">
+                <td width="30vw">
+                    <div style="float: left; padding-right: 5px;"><p align="left" style="width: 100%; padding: 15px; border-radius: 5px; background-color: #2c2c33"><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #3e3e47">{{ user.playerscore }}</span> Score<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #3e3e47">{{ user.prestigelevel }}</span> Prestige<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #9090a3">{{ user.osmiumscore }}</span> Osmium<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #c74c4c">{{ user.redberylscore }}</span> Red Beryl<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #3b4b7f">{{ user.tanzanitescore }}</span> Tanzanite<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #99b8bf">{{ user.diamondscore }}</span> Diamond<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #a19d94">{{ user.ironscore }}</span> Iron<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #B87333">{{ user.copperscore }}</span> Copper</p></div>
+                    <div style="float: left; padding-left: 5px;"><p align="left" style="width: 100%; padding: 15px; border-radius: 5px; background-color: #2c2c33"><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #3e3e47">{{ user.playerRarityMultiplier }}</span> Multiplier<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #9090a3">{{ user.amountOfMinesUnlocked|int - 1 }}</span> Extra Mines Unlocked<br><br><span align="left" style="width: 70%; padding: 10px; border-radius: 5px; background-color: #c74c4c">More Items will come</span></div>
+                </td>
+              <td width="40vw">
+                    <form action="/mine_dev" method="POST" style="display: inline;">
+                        <select name="MiningSecSelect" class="browser-default custom-select" onchange="miningSecChange()">
+                            <option value="10sec">10 Seconds</option>
+                            <option value="30sec">30 Seconds</option>
+                            <option value="60sec">1 Minute</option>
+                            <option value="customSecValue">Other</option>
+                        </select>
+                        <br>
+                        <br>
+                        <div id="customSecId" style="visibility: hidden;">
+                            <div class="input-group input-group-sm mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">H</span>
+                              </div>
+                              <input name="customHourValueInput" type="number" min="0" max="24" value="0" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" required />&nbsp;<b>:</b>&nbsp;
+                              <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">M</span>
+                              </div>
+                              <input name="customMinuteValueInput" type="number" min="0" max="59" value="0" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" required />&nbsp;<b>:</b>&nbsp;
+                              <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-sm">S</span>
+                              </div>
+                              <input name="customSecValueInput" type="number" min="0" max="59" value="0" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" required />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="float: left">Mine</button>
+                    </form>
+
+
+                    <script type="text/javascript">
+                            function miningSecChange() {
+                                var customSecValue = document.getElementById("customSecId");
+                                if (document.forms[0].MiningSecSelect.options[document.forms[0].MiningSecSelect.selectedIndex].value == "customSecValue") {
+                                    customSecValue.style.visibility = "visible";
+                                }
+                                else {
+                                    customSecValue.style.visibility = "hidden";
+                                }
+                            }
+                    </script>
+              </td>
+              <td width="30vw">
+                <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine1" style="display:inline-block;">This mine is currently inactive</span></p>
+                {% if minesUnlocked == 2 %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine2" style="display:inline-block;">This mine is currently inactive (Will be working soon)</span></p>
+                {% else %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><i class="fa-solid fa-lock" style="color: #e32012"></i>&nbsp;&nbsp;This mine is locked&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#lockedMine2Modal">Learn More</button></p>
+                {% endif %}
+                {% if minesUnlocked == 3 %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine3" style="display:inline-block;">This mine is currently inactive (Will be working soon)</span></p>
+                {% else %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><i class="fa-solid fa-lock" style="color: #e32012"></i>&nbsp;&nbsp;This mine is locked&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#lockedMine3Modal">Learn More</button></p>
+                {% endif %}
+                {% if minesUnlocked == 4 %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine4" style="display:inline-block;">This mine is currently inactive (Will be working soon)</span></p>
+                {% else %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><i class="fa-solid fa-lock" style="color: #e32012"></i>&nbsp;&nbsp;This mine is locked&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#lockedMine4Modal">Learn More</button></p>
+                {% endif %}
+                {% if minesUnlocked == 5 %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine5" style="display:inline-block;">This mine is currently inactive (Will be working soon)</span></p>
+                {% else %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><i class="fa-solid fa-lock" style="color: #e32012"></i>&nbsp;&nbsp;This mine is locked&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#lockedMine5Modal">Learn More</button></p>
+                {% endif %}
+                {% if minesUnlocked == 6 %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><span id="timeBeginMine6" style="display:inline-block;">This mine is currently inactive (Will be working soon)</span></p>
+                {% else %}
+                    <p align="left" style="width: 75%; padding: 10px; border-radius: 5px; background-color: #2c2c33"><i class="fa-solid fa-lock" style="color: #e32012"></i>&nbsp;&nbsp;This mine is locked&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#lockedMine6Modal">Learn More</button></p>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <b>Store</b>
+                </td>
+            </tr>
+            <tr style="background-color: #484e57">
+                <td colspan="3">
+                    <p align="left" style="width: 30%; padding: 10px; border-radius: 5px; background-color: #2c2c33">Store Item 1 Example</p>
+                    <p align="left" style="width: 30%; padding: 10px; border-radius: 5px; background-color: #2c2c33">Store Item 2 Example</p>
+                    <p align="left" style="width: 30%; padding: 10px; border-radius: 5px; background-color: #2c2c33">Store Item 3 Example</p>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+        <br><br>
+            <div class="modal fade" id="collectOresModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="color: white">Mining Results</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p style="color: white">
+                        You found<br><br>
+                        {{ osmium_found }} Osmium<br>
+                        {{ redberyl_found }} Red Beryl<br>
+                        {{ tanzanite_found }} Tanzanite<br>
+                        {{ diamond_found }} Diamond<br>
+                        {{ iron_found }} Iron<br>
+                        {{ copper_found }} Copper<br><br>
+                        You gained {{ playerscore_gained }} score!
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <form action="/mine_collect">
+                        <button type="submit" class="btn btn-primary">Collect</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="lockedMine2Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Why is this mine locked?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                        To unlock the mine, you must have at least 40 Osmium. When you have enough, you can go to the store to unlock the mine.<br><br>
+                        Your current Osmium score:
+                        {% if user.osmiumscore|int >= 40 %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #40bf3b">{{ user.osmiumscore }}</span>
+                            <p>You have enough osmium to unlock this mine! Just head to the store to unlock it.</p>
+                        {% else %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #ad2a2e">{{ user.osmiumscore }}</span>
+                            <p>You need <b>{{ 40 - user.osmiumscore|int }}</b> more osmium to be able to purchase this mine.</b></p>
+                        {% endif %}
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="lockedMine3Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Why is this mine locked?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                        To unlock the mine, you must have at least 100 Osmium. When you have enough, you can go to the store to unlock the mine.<br><br>
+                        Your current Osmium score:
+                        {% if user.osmiumscore|int >= 100 %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #40bf3b">{{ user.osmiumscore }}</span>
+                            <p>You have enough osmium to unlock this mine! Just head to the store to unlock it.</p>
+                        {% else %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #ad2a2e">{{ user.osmiumscore }}</span>
+                            <p>You need <b>{{ 100 - user.osmiumscore|int }}</b> more osmium to be able to purchase this mine.</b></p>
+                        {% endif %}
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="lockedMine4Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Why is this mine locked?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                        To unlock the mine, you must have at least 175 Osmium. When you have enough, you can go to the store to unlock the mine.<br><br>
+                        Your current Osmium score:
+                        {% if user.osmiumscore|int >= 175 %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #40bf3b">{{ user.osmiumscore }}</span>
+                            <p>You have enough osmium to unlock this mine! Just head to the store to unlock it.</p>
+                        {% else %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #ad2a2e">{{ user.osmiumscore }}</span>
+                            <p>You need <b>{{ 175 - user.osmiumscore|int }}</b> more osmium to be able to purchase this mine.</b></p>
+                        {% endif %}
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="lockedMine5Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Why is this mine locked?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                        To unlock the mine, you must have at least 250 Osmium. When you have enough, you can go to the store to unlock the mine.<br><br>
+                        Your current Osmium score:
+                        {% if user.osmiumscore|int >= 250 %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #40bf3b">{{ user.osmiumscore }}</span>
+                            <p>You have enough osmium to unlock this mine! Just head to the store to unlock it.</p>
+                        {% else %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #ad2a2e">{{ user.osmiumscore }}</span>
+                            <p>You need <b>{{ 250 - user.osmiumscore|int }}</b> more osmium to be able to purchase this mine.</b></p>
+                        {% endif %}
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="lockedMine6Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content" style="background-color: #25272b">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Why is this mine locked?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true" style="color: white;">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                        To unlock the mine, you must have at least 400 Osmium. When you have enough, you can go to the store to unlock the mine.<br><br>
+                        Your current Osmium score:
+                        {% if user.osmiumscore|int >= 400 %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #40bf3b">{{ user.osmiumscore }}</span>
+                            <p>You have enough osmium to unlock this mine! Just head to the store to unlock it.</p>
+                        {% else %}
+                            <span align="left" style="width: 70%; padding: 5px; border-radius: 5px; background-color: #ad2a2e">{{ user.osmiumscore }}</span>
+                            <p>You need <b>{{ 400 - user.osmiumscore|int }}</b> more osmium to be able to purchase this mine.</p>
+                        {% endif %}
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <script>
+            (function(){
+
+                function addLeadingZeros(num, totalLength) {
+                    return String(num).padStart(totalLength, '0');
+                }
+
+                function getTimeRemaining(endtime){
+                    if ((!!window["opr"] && !!["opr"]["addons"]) || !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0) {
+                            msOffset = 0
+                    }
+                    // Firefox 1.0+
+                    else if(navigator.userAgent.indexOf("Firefox") != -1 ){
+                            msOffset = 3000
+                    }
+                    // Chrome OS
+                    else if (/\bCrOS\b/.test(navigator.userAgent)) {
+                            msOffset = -1000
+                    }
+                    // Safari 3.0+ "[object HTMLElementConstructor]"
+                    else if (/constructor/i.test(window["HTMLElement"]) || (function(p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof window["safari"] !== 'undefined' && window["safari"].pushNotification))) {
+                            msOffset = -1000
+                    }
+
+                    // Internet Explorer 6-11
+                    else if (/*@cc_on!@*/false || !!document["documentMode"]) {
+                            msOffset = 1000
+                    }
+
+                    // Chrome 1+
+                    else if (!!window["chrome"] && !!window["chrome"].webstore || navigator.userAgent.indexOf("Chrome") != -1 ) {
+                            msOffset = 3000
+                    }
+
+
+                    // Edge 20+
+                    else if (!(/*@cc_on!@*/false || !!document["documentMode"]) && !!window["StyleMedia"]) {
+                            msOffset = 1000
+                    }
+
+                    // Blink engine detection
+                    else if (((!!window["chrome"] && !!window["chrome"].webstore) || ((!!window["opr"] && !!["opr"]["addons"]) || !!window["opera"] || navigator.userAgent.indexOf(' OPR/') >= 0)) && !!window["CSS"]) {
+                            msOffset = -3000
+                    }
+
+                    else {
+                            msOffset = 0
+                    }
+
+            	  endTime = Date.parse(new Date(mine1TimeStart-Date.parse(new Date())))
+                  endtime = Math.floor(endTime + msOffset);
+                  let total = endtime;
+                  let seconds = Math.floor(endtime / 1000);
+                  let minutes = Math.floor(seconds / 60);
+                  let hours = Math.floor(minutes / 60);
+
+                  seconds = seconds % 60;
+                  minutes = minutes % 60;
+
+                  return {
+                    total,
+                    hours,
+                    minutes,
+                    seconds
+                  };
+                }
+
+                function fadeOut(){
+                    var increment = 0.35;
+                    var opacity = 1;
+                    var instance = window.setInterval(function() {
+                        document.getElementById('timeBeginMine1').style.opacity = opacity
+                        opacity = opacity - increment;
+                        if(opacity < 0){
+                            opacity = 0;
+                            document.getElementById('timeBeginMine1').style.opacity = opacity
+                            document.getElementById('timeBeginMine1').innerHTML = '<i class="fa-solid fa-check" style="color: #40bf3b"></i> Complete&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#collectOresModal">View</button>'
+                            fadeIn();
+                            window.clearInterval(instance);
+                        }
+                    },100)
+                }
+
+                function fadeIn(){
+                    var increment = 0.35;
+                    var opacity = 0;
+                    var instance = window.setInterval(function() {
+                        document.getElementById('timeBeginMine1').style.opacity = opacity
+                        opacity = opacity + increment;
+                        if(opacity > 1){
+                            opacity = 1;
+                            document.getElementById('timeBeginMine1').style.opacity = opacity
+                            window.clearInterval(instance);
+                        }
+                    },100)
+                }
+
+                function performTime () {
+                    timeRemaining = getTimeRemaining(endTime).total;
+                    if (timeRemaining < 0) {
+                        fadeOut();
+                        window.clearInterval(timeInterval)
+                    } else {
+
+                        cpr.innerHTML = `${addLeadingZeros(getTimeRemaining(endTime).hours, 2)}:${addLeadingZeros(getTimeRemaining(endTime).minutes, 2)}:${addLeadingZeros(getTimeRemaining(endTime).seconds, 2)} Left`
+                    }
+                }
+
+                mineTimeToMS = ({{ seconds_loading_bar }}*1000)
+                mine1TimeStart = {{ mine1TimeStart }}
+            	cpr = document.getElementById("timeBeginMine1");
+            	endTime = Date.parse(new Date(mine1TimeStart-Date.parse(new Date())))
+            	timeRemaining = getTimeRemaining(endTime).total;
+            	if (timeRemaining < 0) {
+            	    cpr.innerHTML = '<i class="fa-solid fa-check" style="color: #40bf3b"></i> Complete&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#collectOresModal">View</button>'
+            	}
+            	else {
+            	    cpr.innerHTML = `${addLeadingZeros(getTimeRemaining(endTime).hours, 2)}:${addLeadingZeros(getTimeRemaining(endTime).minutes, 2)}:${addLeadingZeros(getTimeRemaining(endTime).seconds, 2)} Left`;
+            	    timeInterval = setInterval(performTime, 1000);
+            	}
+            })();
+        </script>
+{% endblock %}
